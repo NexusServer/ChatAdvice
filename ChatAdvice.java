@@ -4,36 +4,49 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerChatEvent;
 
-public class ChatAdvice extends PluginBase implements Listener{
-   public void onEnable(){
-   	  this.getPluginManager().registerEvents(this,this);
-   }
-   public void onChat(PlayerChatEvent ev){
-   	  Player player=ev.getPlayer();
-   	  String message=ev.getMessage();
-   	  Level level=player.getLevel();
-   	  if(message.indexOf("@월드")){
-   	  	  ev.setCancelled();
-   	  	  for(Player players : level.getPlayers().values()){
-   	  	  	  players.sendMessage(message.replaceFirst("@월드",""));
-   	  	  }
-   	  }
-   	  if(message.indexOf("@전체")){
-   	  	  ev.setCancelled();
-   	  	  this.getServer().broadcastMessage(message.replaceFirst("@전체",""));
-   	  }
-   	  else if(message.indexOf("@")){//@플레이어 닉네임 일경우
-   	  	  if()
-   	  }
-   	  else{//딱히 없을때 월드채팅으로 ㄱㄱ
-   	  	  ev.setCancelled();
-   	  	  for(Player players : level.getPlayers().values()){
-   	  	  	  players.sendMessage(message.replaceFirst("@월드",""));
-   	  	  }
-   	  }
-   }
-   @EventHandler
-   public void onNameAdvice(PlayerChatEvent event){
-   //@Owner hamseowon
-   }
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class ChatAdvice extends PluginBase implements Listener {
+    final Pattern chatRegExp = Pattern.compile("^(@.*?)\s((.|\r|\n)+)");
+
+    @Override
+    public void onEnable() {
+        this.getPluginManager().registerEvents(this, this);
+    }
+
+    @EventHandler
+    public void onChat(PlayerChatEvent ev) {
+        String message = ev.getMessage();
+        Level level = ev.getPlayer().getLevel();
+        Matcher result = chatRegExp.matcher(message);
+        if (result.find()) {
+            switch (m.group(1)) {
+                case "@월드" :
+                    ev.setCancelled();
+                    for (Player players: level.getPlayers().values()) {
+                        players.sendMessage(message.replaceFirst("@월드", ""));
+                    }
+                break;
+                case "@전체" :
+                    ev.setCancelled();
+                    this.getServer().broadcastMessage(message.replaceFirst("@전체", ""));
+                break;
+                default : //@플레이어닉네임 메시지 일경우
+                    ev.setCancelled();
+                    String username = m.group(1).replaceFirst("@", "");
+                    for (Player players : ev.getPlayer().getServer().getOnlinePlayers().values()) {
+                        if (players.getName().equals(username)) {
+                            players.sendMessage(m.group(2));
+                        }
+                    }
+                break;
+            }
+        } else { //딱히 없을때 월드채팅으로 ㄱㄱ
+            ev.setCancelled();
+            for (Player players: level.getPlayers().values()) {
+                players.sendMessage(message);
+            }
+        }
+    }
 }
