@@ -21,7 +21,7 @@ public class ChatAdvice extends PluginBase implements Listener {
         Level level = ev.getPlayer().getLevel();
         Matcher result = chatRegExp.matcher(message);
         if (result.find()) {
-            switch (m.group(1)) {
+            switch (result.group(1)) {
                 case "@월드" :
                     ev.setCancelled();
                     for (Player players: level.getPlayers().values()) {
@@ -34,10 +34,10 @@ public class ChatAdvice extends PluginBase implements Listener {
                 break;
                 default : //@플레이어닉네임 메시지 일경우
                     ev.setCancelled();
-                    String username = m.group(1).replaceFirst("@", "");
+                    String username = mresultgroup(1).replaceFirst("@", "");
                     for (Player players : ev.getPlayer().getServer().getOnlinePlayers().values()) {
                         if (players.getName().equals(username)) {
-                            players.sendMessage(m.group(2));
+                            players.sendMessage(result.group(2));
                         }
                     }
                 break;
