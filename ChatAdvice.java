@@ -12,7 +12,6 @@ public class ChatAdvice extends PluginBase implements Listener{
    	  Player player=ev.getPlayer();
    	  String message=ev.getMessage();
    	  Level level=player.getLevel();
-   	  if()//#an 을 angelless 로
    	  if(message.indexOf("@월드")){
    	  	  ev.setCancelled();
    	  	  for(Player players : level.getPlayers().values()){
@@ -32,5 +31,9 @@ public class ChatAdvice extends PluginBase implements Listener{
    	  	  	  players.sendMessage(message.replaceFirst("@월드",""));
    	  	  }
    	  }
+   }
+   @EventHandler
+   public void onNameAdvice(PlayerChatEvent event){
+   //@Owner hamseowon
    }
 }
